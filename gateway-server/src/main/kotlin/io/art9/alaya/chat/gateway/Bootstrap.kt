@@ -1,6 +1,6 @@
 package io.art9.alaya.chat.gateway
 
-import io.art9.alaya.chat.gateway.server.MqttServer
+import io.art9.alaya.chat.gateway.server.Server
 import io.quarkus.runtime.StartupEvent
 import io.vertx.core.DeploymentOptions
 import io.vertx.core.Vertx
@@ -11,7 +11,7 @@ import javax.enterprise.inject.Instance
 @ApplicationScoped
 open class Bootstrap {
 
-    fun init(@Observes ev: StartupEvent, vertx: Vertx, verticle: Instance<MqttServer>) {
+    fun init(@Observes ev: StartupEvent, vertx: Vertx, verticle: Instance<Server>) {
         vertx.deployVerticle(verticle::get, DeploymentOptions().setInstances(8))
     }
 }
