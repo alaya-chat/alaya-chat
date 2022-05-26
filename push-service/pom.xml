@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>message-service</artifactId>
+    <artifactId>push-service</artifactId>
 
     <name>Alaya Chat Message Service</name>
     <properties>
