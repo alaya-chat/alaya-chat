@@ -6,12 +6,19 @@ import io.vertx.core.Promise
 import io.vertx.core.Vertx
 import io.vertx.mqtt.MqttEndpoint
 import io.vertx.mqtt.MqttServer
+import io.vertx.mqtt.messages.MqttPubAckMessage
+import io.vertx.mqtt.messages.MqttPublishMessage
 import io.vertx.mqtt.messages.MqttSubscribeMessage
 import mu.KLogging
 
 data class MqttOptions(val port: Int)
 
 interface MqttHandlersFactory {
+
+    fun publishReleaseHandler(vertx: Vertx, endpoint: MqttEndpoint): Handler<Int>
+
+    fun publishHandler(vertx: Vertx, endpoint: MqttEndpoint): Handler<MqttPublishMessage>
+
     fun closeHandler(vertx: Vertx, endpoint: MqttEndpoint): Handler<Void>
 
     fun disconnectHandler(vertx: Vertx, endpoint: MqttEndpoint): Handler<Void>
@@ -30,11 +37,15 @@ open class MqttVerticle(private val options: MqttOptions, private val mqttHandle
         val mqttServer = MqttServer.create(vertx)
         mqttServer
             .endpointHandler { endpoint ->
-                endpoint.closeHandler(mqttHandlersFactory.closeHandler(vertx, endpoint))
-                endpoint.disconnectHandler(mqttHandlersFactory.disconnectHandler(vertx, endpoint))
-                endpoint.subscribeHandler(mqttHandlersFactory.subscribeHandler(vertx, endpoint))
-                endpoint.exceptionHandler(mqttHandlersFactory.exceptionHandler(vertx, endpoint))
-                endpoint.pingHandler(mqttHandlersFactory.pingHandler(vertx, endpoint))
+                endpoint
+                    .publishHandler(mqttHandlersFactory.publishHandler(vertx, endpoint))
+                    .publishReleaseHandler(mqttHandlersFactory.publishReleaseHandler(vertx, endpoint))
+                    .closeHandler(mqttHandlersFactory.closeHandler(vertx, endpoint))
+                    .disconnectHandler(mqttHandlersFactory.disconnectHandler(vertx, endpoint))
+                    .subscribeHandler(mqttHandlersFactory.subscribeHandler(vertx, endpoint))
+                    .exceptionHandler(mqttHandlersFactory.exceptionHandler(vertx, endpoint))
+                    .pingHandler(mqttHandlersFactory.pingHandler(vertx, endpoint))
+                    .accept()
             }
             .listen(options.port)
             .onComplete {
