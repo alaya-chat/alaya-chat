@@ -7,15 +7,19 @@ import org.eclipse.microprofile.config.inject.ConfigProperty
 import javax.enterprise.context.Dependent
 
 @Dependent
-open class Server : AbstractVerticle() {
-
+open class Server(
     @ConfigProperty(name = "mqtt.server.port")
-    private var port: Int = 0
+    private val port: Int
+) : AbstractVerticle() {
+
 
     override fun start(startPromise: Promise<Void>?) {
         val mqttServer = MqttServer.create(vertx)
         mqttServer
-            .endpointHandler {
+            .endpointHandler { endpoint ->
+                endpoint.closeHandler {
+
+                }
 
             }
             .listen(port)
