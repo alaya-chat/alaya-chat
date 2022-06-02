@@ -10,7 +10,6 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>gateway-server</artifactId>
-    <name>Alaya Chat Gateway Server</name>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
@@ -23,10 +22,6 @@
             <groupId>io.art9.alaya.chat</groupId>
             <artifactId>commons</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>io.art9.metaq</groupId>-->
-<!--            <artifactId>metaq-vertx</artifactId>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-mqtt</artifactId>
