@@ -1,43 +1,55 @@
 package io.art9.alaya.chat.gateway.handler
 
-import io.art9.alaya.chat.gateway.verticle.MqttHandlersFactory
+import io.art9.alaya.chat.gateway.mqtt.MqttHandlersFactory
+import io.art9.alaya.chat.gateway.mqtt.MqttSession
 import io.vertx.core.Handler
 import io.vertx.core.Vertx
-import io.vertx.mqtt.MqttEndpoint
 import io.vertx.mqtt.messages.MqttPublishMessage
 import io.vertx.mqtt.messages.MqttSubscribeMessage
 import mu.KLogging
+import org.koin.java.KoinJavaComponent.inject
 import java.util.concurrent.atomic.AtomicInteger
 
-open class DefaultMqttHandlersFactory() : MqttHandlersFactory {
-    override fun publishReleaseHandler(vertx: Vertx, endpoint: MqttEndpoint): Handler<Int> = Handler { messageId ->
+open class DefaultMqttHandlersFactory : MqttHandlersFactory {
+
+    private val vertx: Vertx by inject(Vertx::class.java)
+    override fun publishReleaseHandler(session: MqttSession): Handler<Int> = Handler { messageId ->
         logger.info { "Publish release message $messageId" }
+        session.endpoint.publishRelease(messageId)
     }
 
-    override fun publishHandler(vertx: Vertx, endpoint: MqttEndpoint): Handler<MqttPublishMessage> =
+    override fun publishHandler(session: MqttSession): Handler<MqttPublishMessage> =
         Handler { publish ->
+            val topic = publish.topicName()
+            val prop = publish.properties()
+            val ctype = prop.getProperty(0)
+            if (ctype.value() == "json") {
+
+            } else {
+
+            }
             logger.info { "Received PUBLISH message: ${publish.payload().toString("UTF8")}" }
         }
 
 
-    override fun closeHandler(vertx: Vertx, endpoint: MqttEndpoint): Handler<Void> = Handler {
+    override fun closeHandler(session: MqttSession): Handler<Void> = Handler {
         logger.info { "on close" }
     }
 
-    override fun disconnectHandler(vertx: Vertx, endpoint: MqttEndpoint): Handler<Void> = Handler {
+    override fun disconnectHandler(session: MqttSession): Handler<Void> = Handler {
         logger.info { "on disconnect" }
     }
 
-    override fun subscribeHandler(vertx: Vertx, endpoint: MqttEndpoint): Handler<MqttSubscribeMessage> =
+    override fun subscribeHandler(session: MqttSession): Handler<MqttSubscribeMessage> =
         Handler { subscribe ->
             logger.info { "Receive SUBSCRIBE message $subscribe" }
         }
 
-    override fun exceptionHandler(vertx: Vertx, endpoint: MqttEndpoint): Handler<Throwable> = Handler { err ->
+    override fun exceptionHandler(session: MqttSession): Handler<Throwable> = Handler { err ->
         logger.error(err) { "handle exception" }
     }
 
-    override fun pingHandler(vertx: Vertx, endpoint: MqttEndpoint): Handler<Void> = Handler {
+    override fun pingHandler(session: MqttSession): Handler<Void> = Handler {
         logger.info { "Receive PING message" }
     }
 

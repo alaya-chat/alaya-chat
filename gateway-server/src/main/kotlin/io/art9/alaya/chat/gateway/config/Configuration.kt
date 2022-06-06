@@ -1,6 +1,6 @@
 package io.art9.alaya.chat.gateway.config
 
-import io.art9.alaya.chat.gateway.verticle.MqttOptions
+import io.art9.alaya.chat.gateway.mqtt.MqttOptions
 import io.vertx.core.Vertx
 
 object Configuration {

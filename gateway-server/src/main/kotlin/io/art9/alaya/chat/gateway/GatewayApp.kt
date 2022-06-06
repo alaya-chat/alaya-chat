@@ -1,7 +1,7 @@
 package io.art9.alaya.chat.gateway
 
 import io.art9.alaya.chat.gateway.config.KoinModule
-import io.art9.alaya.chat.gateway.verticle.MqttVerticle
+import io.art9.alaya.chat.gateway.mqtt.MqttVerticle
 import io.art9.kylinx.core.util.runApplication
 import io.art9.kylinx.koin.verticle.KoinVerticle
 import io.vertx.core.DeploymentOptions

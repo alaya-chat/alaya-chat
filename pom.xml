@@ -12,6 +12,7 @@
         <module>push-service</module>
         <module>exchange-service</module>
         <module>authn-service</module>
+        <module>proto</module>
     </modules>
     <groupId>io.art9.alaya.chat</groupId>
     <version>0.0.1-SNAPSHOT</version>
