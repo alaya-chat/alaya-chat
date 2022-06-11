@@ -5,6 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>alaya-chat-parent</artifactId>
+
     <modules>
         <module>commons</module>
         <module>gateway-server</module>
@@ -14,6 +15,7 @@
         <module>authn-service</module>
         <module>proto</module>
     </modules>
+
     <groupId>io.art9.alaya.chat</groupId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
@@ -42,14 +44,6 @@
         <dependencies>
 
             <dependency>
-                <groupId>${quarkus.platform.group-id}</groupId>
-                <artifactId>${quarkus.platform.artifact-id}</artifactId>
-                <version>${quarkus.platform.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-            <dependency>
                 <groupId>io.art9.kylinx</groupId>
                 <artifactId>kylinx-parent</artifactId>
                 <version>${kylinx.version}</version>
@@ -59,7 +53,7 @@
 
             <dependency>
                 <groupId>io.art9.alaya.chat</groupId>
-                <artifactId>commons</artifactId>
+                <artifactId>message-commons</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
