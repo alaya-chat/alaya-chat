@@ -1,7 +1,7 @@
 package io.art9.alaya.chat.gateway.handler
 
 import io.art9.alaya.chat.gateway.mqtt.MqttHandlersFactory
-import io.art9.alaya.chat.gateway.mqtt.MqttSession
+import io.art9.alaya.chat.message.Session
 import io.vertx.core.Handler
 import io.vertx.core.Vertx
 import io.vertx.mqtt.messages.MqttPublishMessage
@@ -13,12 +13,12 @@ import java.util.concurrent.atomic.AtomicInteger
 open class DefaultMqttHandlersFactory : MqttHandlersFactory {
 
     private val vertx: Vertx by inject(Vertx::class.java)
-    override fun publishReleaseHandler(session: MqttSession): Handler<Int> = Handler { messageId ->
+    override fun publishReleaseHandler(session: Session): Handler<Int> = Handler { messageId ->
         logger.info { "Publish release message $messageId" }
-        session.endpoint.publishRelease(messageId)
+        session.publishRelease(messageId)
     }
 
-    override fun publishHandler(session: MqttSession): Handler<MqttPublishMessage> =
+    override fun publishHandler(session: Session): Handler<MqttPublishMessage> =
         Handler { publish ->
             val topic = publish.topicName()
             val prop = publish.properties()
@@ -32,24 +32,24 @@ open class DefaultMqttHandlersFactory : MqttHandlersFactory {
         }
 
 
-    override fun closeHandler(session: MqttSession): Handler<Void> = Handler {
+    override fun closeHandler(session: Session): Handler<Void> = Handler {
         logger.info { "on close" }
     }
 
-    override fun disconnectHandler(session: MqttSession): Handler<Void> = Handler {
+    override fun disconnectHandler(session: Session): Handler<Void> = Handler {
         logger.info { "on disconnect" }
     }
 
-    override fun subscribeHandler(session: MqttSession): Handler<MqttSubscribeMessage> =
+    override fun subscribeHandler(session: Session): Handler<MqttSubscribeMessage> =
         Handler { subscribe ->
             logger.info { "Receive SUBSCRIBE message $subscribe" }
         }
 
-    override fun exceptionHandler(session: MqttSession): Handler<Throwable> = Handler { err ->
+    override fun exceptionHandler(session: Session): Handler<Throwable> = Handler { err ->
         logger.error(err) { "handle exception" }
     }
 
-    override fun pingHandler(session: MqttSession): Handler<Void> = Handler {
+    override fun pingHandler(session: Session): Handler<Void> = Handler {
         logger.info { "Receive PING message" }
     }
 

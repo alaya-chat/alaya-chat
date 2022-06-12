@@ -22,6 +22,11 @@
             <artifactId>kylinx-core</artifactId>
         </dependency>
 
+<!--        <dependency>-->
+<!--            <groupId>io.art9.kylinx</groupId>-->
+<!--            <artifactId>kylinx-arrow</artifactId>-->
+<!--        </dependency>-->
+
         <dependency>
             <groupId>io.art9.kylinx</groupId>
             <artifactId>kylinx-cdi-koin</artifactId>

@@ -1,7 +1,7 @@
 package io.art9.alaya.chat.gateway
 
 import io.art9.alaya.chat.gateway.config.KoinModule
-import io.art9.alaya.chat.gateway.mqtt.MqttVerticle
+import io.art9.alaya.chat.gateway.mqtt.MqttGatewayServer
 import io.art9.kylinx.core.util.runApplication
 import io.art9.kylinx.koin.verticle.KoinVerticle
 import io.vertx.core.DeploymentOptions
@@ -12,7 +12,7 @@ import org.koin.core.module.Module
 open class GatewayApp : KoinVerticle() {
 
     override fun start(promise: Promise<Void>) {
-        vertx.deployVerticle({ get<MqttVerticle>() }, DeploymentOptions().setInstances(8))
+        vertx.deployVerticle({ get<MqttGatewayServer>() }, DeploymentOptions().setInstances(8))
             .mapEmpty<Void>()
             .onComplete(promise)
     }

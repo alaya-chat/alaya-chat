@@ -11,10 +11,9 @@ class Session(
     val clientInfo: SecurityPolicy.ClientInfo
 ) {
 
-    fun sendMessage(message: Message): Future<Void> {
-        TODO()
+    fun <T> sendMessage(message: Message<T>): Future<Void> {
+        return transport.sendMessage(message)
     }
-
 
     companion object : KLogging() {
         /**

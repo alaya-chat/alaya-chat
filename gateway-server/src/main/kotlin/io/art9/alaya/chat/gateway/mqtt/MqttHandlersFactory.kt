@@ -1,22 +1,23 @@
 package io.art9.alaya.chat.gateway.mqtt
 
+import io.art9.alaya.chat.message.Session
 import io.vertx.core.Handler
 import io.vertx.mqtt.messages.MqttPublishMessage
 import io.vertx.mqtt.messages.MqttSubscribeMessage
 
 interface MqttHandlersFactory {
 
-    fun publishReleaseHandler(session: MqttSession): Handler<Int>
+    fun publishReleaseHandler(session: Session): Handler<Int>
 
-    fun publishHandler(session: MqttSession): Handler<MqttPublishMessage>
+    fun publishHandler(session: Session): Handler<MqttPublishMessage>
 
-    fun closeHandler(session: MqttSession): Handler<Void>
+    fun closeHandler(session: Session): Handler<Void>
 
-    fun disconnectHandler(session: MqttSession): Handler<Void>
+    fun disconnectHandler(session: Session): Handler<Void>
 
-    fun subscribeHandler(session: MqttSession): Handler<MqttSubscribeMessage>
+    fun subscribeHandler(session: Session): Handler<MqttSubscribeMessage>
 
-    fun exceptionHandler(session: MqttSession): Handler<Throwable>
+    fun exceptionHandler(session: Session): Handler<Throwable>
 
-    fun pingHandler(session: MqttSession): Handler<Void>
+    fun pingHandler(session: Session): Handler<Void>
 }

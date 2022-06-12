@@ -4,5 +4,5 @@ import io.vertx.core.Future
 
 interface Transport : Cloneable {
 
-    fun sendMessage(message: Message): Future<Void>
+    fun <T> sendMessage(message: Message<T>): Future<Void>
 }
