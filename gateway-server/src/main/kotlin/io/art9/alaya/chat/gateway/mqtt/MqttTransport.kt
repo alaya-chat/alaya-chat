@@ -14,19 +14,20 @@ class MqttTransport(
     private val messageEncoder: MessageEncoder
 ) : Transport {
 
-    override fun <T> sendMessage(message: Message<T>): Future<Void> = CompositeFuture.all(
-        message.topics()
-            .map { topic ->
-                Future
-                    .future<Buffer> { h ->
-                        messageEncoder.encode(message)
-                            .onSuccess { h.complete() }
-                            .onFailure { h.fail(it.cause) }
-                    }
-                    .map { buf ->
-                        endpoint.publish(topic, buf, MqttQoS.AT_LEAST_ONCE, false, false)
-                    }
-            }
-    )
+    override fun <T> sendMessage(message: Message<T>): Future<Void> = CompositeFuture
+        .all(
+            message.topics()
+                .map { topic ->
+                    Future
+                        .future<Buffer> { h ->
+                            messageEncoder.encode(message)
+                                .onSuccess { h.complete() }
+                                .onFailure { h.fail(it.cause) }
+                        }
+                        .map { buf ->
+                            endpoint.publish(topic, buf, MqttQoS.AT_LEAST_ONCE, false, false)
+                        }
+                }
+        )
         .mapEmpty()
 }
