@@ -5,4 +5,6 @@ import io.vertx.core.Future
 interface Transport : Cloneable {
 
     fun <T> sendMessage(message: Message<T>): Future<Void>
+    fun beforeSessionRemoved()
+    fun afterSessionRemoved()
 }

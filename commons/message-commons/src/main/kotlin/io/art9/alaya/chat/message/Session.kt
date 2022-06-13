@@ -11,6 +11,10 @@ class Session(
     val clientInfo: SecurityPolicy.ClientInfo
 ) {
 
+    fun id(): String {
+        return clientInfo.id()
+    }
+
     fun <T> sendMessage(message: Message<T>): Future<Void> {
         return transport.sendMessage(message)
     }

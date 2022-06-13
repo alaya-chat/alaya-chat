@@ -8,6 +8,7 @@ import io.art9.alaya.chat.gateway.AuthServiceImpl
 import io.art9.alaya.chat.gateway.mqtt.MqttSecurityPolicy
 import io.art9.alaya.chat.gateway.mqtt.MqttTransport
 import io.art9.alaya.chat.message.SecurityPolicy
+import io.art9.alaya.chat.message.SessionManager
 import io.art9.alaya.chat.message.Transport
 import io.vertx.mqtt.MqttEndpoint
 import org.koin.core.module.dsl.bind
@@ -20,7 +21,8 @@ object KoinModule {
         singleOf(::DefaultMqttHandlersFactory) { bind<MqttHandlersFactory>() }
         factory { Configuration.mqttOptions(get()) }
         singleOf(::AuthServiceImpl) { bind<AuthService>() }
+        factory { SessionManager() }
         singleOf(::MqttSecurityPolicy) { bind<SecurityPolicy<MqttSecurityPolicy.ClientInfo, MqttEndpoint>>() }
-        factory { MqttGatewayServer(get(), get(), get(), get()) }
+        factory { MqttGatewayServer(get(), get(), get(), get(), get()) }
     }
 }

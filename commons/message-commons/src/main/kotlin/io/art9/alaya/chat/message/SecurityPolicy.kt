@@ -8,5 +8,7 @@ interface SecurityPolicy<T : SecurityPolicy.ClientInfo, C> {
 
     fun releaseConnection(client: T)
 
-    interface ClientInfo
+    interface ClientInfo {
+        fun id(): String
+    }
 }

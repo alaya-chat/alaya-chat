@@ -2,6 +2,9 @@ package io.art9.alaya.chat.gateway.mqtt
 
 import io.art9.alaya.chat.gateway.AuthService
 import io.art9.alaya.chat.message.SecurityPolicy
+import io.art9.alaya.chat.message.Session
+import io.art9.alaya.chat.message.SessionManager
+import io.art9.alaya.chat.message.codec.MockMessageEncoder
 import io.netty.handler.codec.mqtt.MqttConnectReturnCode
 import io.netty.handler.codec.mqtt.MqttProperties
 import io.netty.handler.codec.mqtt.MqttProperties.StringProperty
@@ -18,6 +21,7 @@ open class MqttGatewayServer(
     private val mqttHandlersFactory: MqttHandlersFactory,
     private val authService: AuthService,
     private val securityPolicy: SecurityPolicy<MqttSecurityPolicy.ClientInfo, MqttEndpoint>,
+    private val sessionManager: SessionManager
 ) :
     AbstractVerticle() {
 
@@ -26,20 +30,23 @@ open class MqttGatewayServer(
         securityPolicy.authenticateConnection(endpoint)
             .onSuccess {
                 if (it.isSuccess) {
+                    val transport = MqttTransport(endpoint, MockMessageEncoder())
+                    val session = Session.establish(transport, it.getOrNull()!!)
+                    sessionManager.add(session)
+                    endpoint.closeHandler {
+                        transport.beforeSessionRemoved()
+                        sessionManager.remove(session.id())
+                        transport.afterSessionRemoved()
+                    }
+
+                    endpoint.disconnectHandler {
+                        transport.beforeSessionRemoved()
+                        sessionManager.remove(session.id())
+                        transport.afterSessionRemoved()
+                    }
                     val props = MqttProperties()
                     props.add(StringProperty(0, endpoint.clientIdentifier()))
-//                    endpoint
-//                        .publishHandler(mqttHandlersFactory.publishHandler(session))
-//                        .publishReleaseHandler(mqttHandlersFactory.publishReleaseHandler(session))
-//                        .closeHandler(mqttHandlersFactory.closeHandler(session))
-//                        .disconnectHandler(mqttHandlersFactory.disconnectHandler(session))
-//                        .subscribeHandler(mqttHandlersFactory.subscribeHandler(session))
-//                        .exceptionHandler(mqttHandlersFactory.exceptionHandler(session))
-//                        .pingHandler(mqttHandlersFactory.pingHandler(session))
                     endpoint.accept(true, props)
-//                    val session = Session.establish(mqttTransport, it.getOrNull()!!)
-//                    vertx.eventBus().consumer<Message>("_alaya.gateway.consume:" + endpoint.clientIdentifier()) {
-//                    }
                 } else {
                     val result = it.exceptionOrNull()
                     logger.error(result) { "Authenticate connection failed" }
@@ -50,36 +57,6 @@ open class MqttGatewayServer(
                 logger.error(it) { "Authenticate connection failed" }
                 endpoint.reject(MqttConnectReturnCode.CONNECTION_REFUSED_SERVER_UNAVAILABLE)
             }
-//        if (endpoint.auth() == null) {
-//            endpoint.reject(MqttConnectReturnCode.CONNECTION_REFUSED_BAD_AUTHENTICATION_METHOD)
-//        }
-//
-//        authService.auth(endpoint.auth().username, endpoint.auth().password)
-//            .onSuccess {
-//                when (it) {
-//                    is AuthSuccess -> {
-//
-//                        val session = MqttSession.create(endpoint)
-//                        endpoint
-//                            .publishHandler(mqttHandlersFactory.publishHandler(session))
-//                            .publishReleaseHandler(mqttHandlersFactory.publishReleaseHandler(session))
-//                            .closeHandler(mqttHandlersFactory.closeHandler(session))
-//                            .disconnectHandler(mqttHandlersFactory.disconnectHandler(session))
-//                            .subscribeHandler(mqttHandlersFactory.subscribeHandler(session))
-//                            .exceptionHandler(mqttHandlersFactory.exceptionHandler(session))
-//                            .pingHandler(mqttHandlersFactory.pingHandler(session))
-//                            .accept()
-//                    }
-//                    is AuthFailed -> {
-//                        endpoint.reject(MqttConnectReturnCode.CONNECTION_REFUSED_BAD_USERNAME_OR_PASSWORD)
-//                    }
-//                    else -> {}
-//                }
-//            }
-//            .onFailure {
-//                endpoint.reject(MqttConnectReturnCode.CONNECTION_REFUSED_BAD_USERNAME_OR_PASSWORD)
-//            }
-
     }
 
     override fun start(startPromise: Promise<Void>?) {

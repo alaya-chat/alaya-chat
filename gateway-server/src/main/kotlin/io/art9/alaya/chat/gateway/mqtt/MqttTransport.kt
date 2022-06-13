@@ -11,8 +11,28 @@ import io.vertx.mqtt.MqttEndpoint
 
 class MqttTransport(
     private val endpoint: MqttEndpoint,
-    private val messageEncoder: MessageEncoder
+    private val messageEncoder: MessageEncoder<Buffer>
 ) : Transport {
+
+    init {
+        endpoint.publishHandler {
+
+        }
+
+        endpoint.pingHandler {
+
+        }
+
+        endpoint.closeHandler {
+
+        }
+    }
+
+    override fun afterSessionRemoved() {
+    }
+
+    override fun beforeSessionRemoved() {
+    }
 
     override fun <T> sendMessage(message: Message<T>): Future<Void> = CompositeFuture
         .all(
