@@ -2,7 +2,7 @@ package io.art9.alaya.chat.message
 
 import java.util.concurrent.ConcurrentHashMap
 
-class SessionManager {
+class SessionStore {
 
     private val store = ConcurrentHashMap<String, Session>()
 

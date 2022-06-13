@@ -3,7 +3,7 @@ package io.art9.alaya.chat.gateway.mqtt
 import io.art9.alaya.chat.gateway.AuthService
 import io.art9.alaya.chat.message.SecurityPolicy
 import io.art9.alaya.chat.message.Session
-import io.art9.alaya.chat.message.SessionManager
+import io.art9.alaya.chat.message.SessionStore
 import io.art9.alaya.chat.message.codec.MockMessageEncoder
 import io.netty.handler.codec.mqtt.MqttConnectReturnCode
 import io.netty.handler.codec.mqtt.MqttProperties
@@ -21,7 +21,7 @@ open class MqttGatewayServer(
     private val mqttHandlersFactory: MqttHandlersFactory,
     private val authService: AuthService,
     private val securityPolicy: SecurityPolicy<MqttSecurityPolicy.ClientInfo, MqttEndpoint>,
-    private val sessionManager: SessionManager
+    private val sessionStore: SessionStore
 ) :
     AbstractVerticle() {
 
@@ -32,16 +32,16 @@ open class MqttGatewayServer(
                 if (it.isSuccess) {
                     val transport = MqttTransport(endpoint, MockMessageEncoder())
                     val session = Session.establish(transport, it.getOrNull()!!)
-                    sessionManager.add(session)
+                    sessionStore.add(session)
                     endpoint.closeHandler {
                         transport.beforeSessionRemoved()
-                        sessionManager.remove(session.id())
+                        sessionStore.remove(session.id())
                         transport.afterSessionRemoved()
                     }
 
                     endpoint.disconnectHandler {
                         transport.beforeSessionRemoved()
-                        sessionManager.remove(session.id())
+                        sessionStore.remove(session.id())
                         transport.afterSessionRemoved()
                     }
                     val props = MqttProperties()
