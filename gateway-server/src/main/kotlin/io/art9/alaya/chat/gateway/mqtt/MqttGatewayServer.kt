@@ -1,14 +1,9 @@
 package io.art9.alaya.chat.gateway.mqtt
 
-import io.art9.alaya.chat.gateway.AuthFailed
 import io.art9.alaya.chat.gateway.AuthService
-import io.art9.alaya.chat.gateway.AuthSuccess
-import io.art9.alaya.chat.message.Message
 import io.art9.alaya.chat.message.SecurityPolicy
-import io.art9.alaya.chat.message.Session
 import io.netty.handler.codec.mqtt.MqttConnectReturnCode
 import io.netty.handler.codec.mqtt.MqttProperties
-import io.netty.handler.codec.mqtt.MqttProperties.MqttProperty
 import io.netty.handler.codec.mqtt.MqttProperties.StringProperty
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.Promise
@@ -23,7 +18,6 @@ open class MqttGatewayServer(
     private val mqttHandlersFactory: MqttHandlersFactory,
     private val authService: AuthService,
     private val securityPolicy: SecurityPolicy<MqttSecurityPolicy.ClientInfo, MqttEndpoint>,
-    private val mqttTransport: MqttTransport
 ) :
     AbstractVerticle() {
 
@@ -34,14 +28,14 @@ open class MqttGatewayServer(
                 if (it.isSuccess) {
                     val props = MqttProperties()
                     props.add(StringProperty(0, endpoint.clientIdentifier()))
-                    endpoint
-                        .publishHandler(mqttHandlersFactory.publishHandler(session))
-                        .publishReleaseHandler(mqttHandlersFactory.publishReleaseHandler(session))
-                        .closeHandler(mqttHandlersFactory.closeHandler(session))
-                        .disconnectHandler(mqttHandlersFactory.disconnectHandler(session))
-                        .subscribeHandler(mqttHandlersFactory.subscribeHandler(session))
-                        .exceptionHandler(mqttHandlersFactory.exceptionHandler(session))
-                        .pingHandler(mqttHandlersFactory.pingHandler(session))
+//                    endpoint
+//                        .publishHandler(mqttHandlersFactory.publishHandler(session))
+//                        .publishReleaseHandler(mqttHandlersFactory.publishReleaseHandler(session))
+//                        .closeHandler(mqttHandlersFactory.closeHandler(session))
+//                        .disconnectHandler(mqttHandlersFactory.disconnectHandler(session))
+//                        .subscribeHandler(mqttHandlersFactory.subscribeHandler(session))
+//                        .exceptionHandler(mqttHandlersFactory.exceptionHandler(session))
+//                        .pingHandler(mqttHandlersFactory.pingHandler(session))
                     endpoint.accept(true, props)
 //                    val session = Session.establish(mqttTransport, it.getOrNull()!!)
 //                    vertx.eventBus().consumer<Message>("_alaya.gateway.consume:" + endpoint.clientIdentifier()) {

@@ -15,7 +15,7 @@ open class DefaultMqttHandlersFactory : MqttHandlersFactory {
     private val vertx: Vertx by inject(Vertx::class.java)
     override fun publishReleaseHandler(session: Session): Handler<Int> = Handler { messageId ->
         logger.info { "Publish release message $messageId" }
-        session.publishRelease(messageId)
+//        session.publishRelease(messageId)
     }
 
     override fun publishHandler(session: Session): Handler<MqttPublishMessage> =

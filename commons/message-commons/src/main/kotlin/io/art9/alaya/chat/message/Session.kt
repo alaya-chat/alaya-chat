@@ -7,7 +7,7 @@ import mu.KLogging
  * Session
  */
 class Session(
-    val transport: Transport,
+    private val transport: Transport,
     val clientInfo: SecurityPolicy.ClientInfo
 ) {
 
