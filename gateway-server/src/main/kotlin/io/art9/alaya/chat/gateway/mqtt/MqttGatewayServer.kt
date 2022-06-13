@@ -2,7 +2,6 @@ package io.art9.alaya.chat.gateway.mqtt
 
 import io.art9.alaya.chat.gateway.AuthService
 import io.art9.alaya.chat.message.SecurityPolicy
-import io.art9.alaya.chat.message.Session
 import io.art9.alaya.chat.message.SessionStore
 import io.art9.alaya.chat.message.codec.MockMessageEncoder
 import io.netty.handler.codec.mqtt.MqttConnectReturnCode
@@ -31,18 +30,32 @@ open class MqttGatewayServer(
             .onSuccess {
                 if (it.isSuccess) {
                     val transport = MqttTransport(endpoint, MockMessageEncoder())
-                    val session = Session.establish(transport, it.getOrNull()!!)
+                    val session = MqttSession.establish(transport, it.getOrNull()!!)
                     sessionStore.add(session)
                     endpoint.closeHandler {
-                        transport.beforeSessionRemoved()
+                        session.onClose()
                         sessionStore.remove(session.id())
-                        transport.afterSessionRemoved()
+                    }
+
+                    endpoint.subscribeHandler { msg ->
+                        session.onSubscribe(msg)
+                    }
+
+                    endpoint.unsubscribeHandler { msg ->
+                        session.onUnsubscribe(msg)
+                    }
+
+                    endpoint.pingHandler {
+                        session.onPing()
+                    }
+
+                    endpoint.publishHandler { msg ->
+                        session.onPublish(msg)
                     }
 
                     endpoint.disconnectHandler {
-                        transport.beforeSessionRemoved()
+                        session.onDisconnect()
                         sessionStore.remove(session.id())
-                        transport.afterSessionRemoved()
                     }
                     val props = MqttProperties()
                     props.add(StringProperty(0, endpoint.clientIdentifier()))
